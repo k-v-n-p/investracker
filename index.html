@@ -476,10 +476,12 @@
   </div>
   <div class="s-divider"></div>
   <div class="s-section s-section-spaced">Cloud sync</div>
+  <div class="s-hint">Changes save automatically when cloud sync is on. Use Sync now to push immediately.</div>
   <div id="cloud-sync-status" class="s-hint cloud-status cloud-offline">Checking…</div>
   <button class="s-btn" id="cloud-sync-btn" onclick="CloudSync.syncNow()">↻ Sync now</button>
   <div class="s-divider"></div>
-  <div class="s-section s-section-spaced">Data</div>
+  <div class="s-section s-section-spaced">Backup &amp; edit outside app</div>
+  <div class="s-hint">Export downloads your full portfolio JSON (includes API keys — keep private). Import replaces all data; uploads to cloud if sync is enabled.</div>
   <button class="s-btn" onclick="exportData()">↓ Export All Data (JSON)</button>
   <button class="s-btn" onclick="importData()">↑ Import Data (JSON)</button>
   <div class="s-divider"></div>

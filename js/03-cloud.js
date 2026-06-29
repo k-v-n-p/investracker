@@ -47,26 +47,34 @@ const CloudSync = {
   },
 
   applyPayload(data) {
-    if (!data || typeof data !== 'object') return;
-    if (data.property_profiles?.length) {
+    if (!data || typeof data !== 'object') return false;
+    if (Array.isArray(data.property_profiles)) {
       PROFILES.length = 0;
       data.property_profiles.forEach(p => PROFILES.push(p));
       Storage.save('property_profiles', PROFILES);
     }
-    if (data.stock_holdings) {
+    if (Array.isArray(data.stock_holdings)) {
       stockHoldings = data.stock_holdings;
       Storage.save('stock_holdings', stockHoldings);
     }
-    if (data.stock_pnl_history) {
+    if (Array.isArray(data.stock_pnl_history)) {
       stockPnlHistory = data.stock_pnl_history;
       Storage.save('stock_pnl_history', stockPnlHistory);
     }
-    if (data.settings) Storage.save('app_settings', data.settings);
+    if (data.settings && typeof data.settings === 'object' && !Array.isArray(data.settings)) {
+      Storage.save('app_settings', data.settings);
+    }
+    if (PROFILES.length === 0) {
+      PROFILES.push({ name: 'Property 1', color: PALETTE[0], state: defaultState() });
+      Storage.save('property_profiles', PROFILES);
+    }
     activeProfile = 0;
     renderProfileBar();
     loadProfile(0);
     renderHoldings();
     updateStockCards();
+    if (typeof updateStockCharts === 'function') updateStockCharts();
+    return true;
   },
 
   async login(password) {
@@ -98,9 +106,7 @@ const CloudSync = {
       }
       if (!res.ok) throw new Error('Failed to load cloud data');
       const data = await res.json();
-      if (data.property_profiles?.length || data.stock_holdings?.length || data.stock_pnl_history?.length || Object.keys(data.settings || {}).length) {
-        CloudSync.applyPayload(data);
-      }
+      CloudSync.applyPayload(data);
       const when = data.updatedAt ? new Date(data.updatedAt).toLocaleString() : 'now';
       CloudSync._setStatus('synced', `Synced from cloud · ${when}`);
       return data;
