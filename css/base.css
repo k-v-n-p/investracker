@@ -26,17 +26,18 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 
 /* ── Section label ── */
 .slbl{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#334155;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.05)}
+.slbl-flush{margin:0;padding:0;border:0}
 .divider{height:1px;background:rgba(255,255,255,.05);margin:16px 0}
 
 /* ── Metric cards ── */
 .mg{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
 .mg2{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
 .mg2-5col{grid-template-columns:repeat(5,1fr)}
-.mc{background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 12px 10px}
+.mc{background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 12px 10px;min-height:72px;display:flex;flex-direction:column}
 .mc .mc-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#334155;margin-bottom:4px}
-.mc .mc-val{font-size:17px;font-weight:600;color:#e2e8f0;letter-spacing:-.02em;line-height:1.2}
+.mc .mc-val{font-size:17px;font-weight:600;color:#e2e8f0;letter-spacing:-.02em;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mc .mc-sub{font-size:10px;color:#334155;margin-top:3px}
-.mc .mc-profit{font-size:12px;font-weight:600;margin-top:3px}
+.mc .mc-profit{font-size:12px;font-weight:600;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mc .mc-profit.pos{color:#10b981}
 .mc .mc-profit.neg{color:#f87171}
 .mc.blue .mc-val{color:#60a5fa}
@@ -48,8 +49,8 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 .mc.sky .mc-val{color:#38bdf8}
 
 /* ── Chart panel ── */
-.cp{background:#161922;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;flex:1}
-.cp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cp{background:#161922;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;flex:1;overflow:hidden;min-width:0}
+.cp-hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .cp-title{font-size:11px;font-weight:500;color:#64748b}
 .legend{display:flex;gap:13px;font-size:11px;color:#475569}
 .legend span{display:flex;align-items:center;gap:5px}
@@ -116,7 +117,9 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 /* ── Responsive breakpoints ── */
 @media (min-width:1280px){
   .mg{grid-template-columns:repeat(5,1fr)}
-  .chart-row-main .cw,.chart-row-side .alloc-chart-wrap{height:min(28vh,280px)}
+  .chart-row-main .cw{height:min(28vh,280px)}
+  .alloc-chart-wrap{height:min(22vh,200px)}
+  .cw2{height:min(28vh,280px)}
 }
 @media (max-width:1024px){
   .mg{grid-template-columns:repeat(3,1fr)}

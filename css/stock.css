@@ -1,11 +1,17 @@
+/* z-index stack:
+   .settings-overlay / .settings-panel : 100 / 101
+   .sh-modal-overlay                   : 200
+   .sh-search-drop                     : 300
+   #login-overlay                      : 9999 */
+
 /* ── P&L chart controls ── */
 .sh-view-toggle{display:flex;background:#0d0f14;border:1px solid rgba(255,255,255,.07);border-radius:6px;overflow:hidden}
-.sh-vt-btn{background:none;border:none;color:#475569;font-size:10px;font-weight:600;padding:4px 9px;cursor:pointer;letter-spacing:.04em;transition:all .15s}
+.sh-vt-btn{background:none;border:none;color:#475569;font-size:11px;font-weight:600;padding:4px 10px;cursor:pointer;letter-spacing:.04em;transition:all .15s}
 .sh-vt-btn.active{background:#1e2535;color:#94a3b8}
-.sh-backfill-btn{background:none;border:1px solid rgba(255,255,255,.07);border-radius:6px;color:#475569;font-size:10px;padding:4px 8px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.sh-backfill-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.15)}
+.sh-backfill-btn{background:none;border:1px solid rgba(255,255,255,.08);border-radius:6px;color:#475569;font-size:11px;padding:4px 10px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.sh-backfill-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.2)}
 .sh-backfill-btn:disabled{opacity:.4;cursor:not-allowed}
-.sh-pnl-hint{font-size:10px;color:#475569;margin-bottom:8px;line-height:1.4}
+.sh-pnl-hint{font-size:10px;color:#475569;margin-bottom:10px;line-height:1.4}
 .cw2{position:relative;width:100%;height:250px;min-height:200px}
 
 /* ── Stock dashboard ── */
@@ -23,12 +29,12 @@
 .sh-add-btn:hover{background:#243d5f;border-color:#3b82f6}
 
 .sh-tbl{width:100%;border-collapse:collapse}
-.sh-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;padding:0 10px 10px;text-align:left;white-space:nowrap}
+.sh-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;padding:0 10px 10px;text-align:right;white-space:nowrap}
 .sh-tbl th.sh-th-sr{font-size:0;letter-spacing:0;line-height:0;color:transparent}
+.sh-tbl th.col-left{text-align:left}
 .sh-tbl td{font-size:12px;color:#94a3b8;padding:10px;border-top:1px solid rgba(255,255,255,.04);vertical-align:middle}
 .sh-tbl th:nth-child(n+4),.sh-tbl td:nth-child(n+4){text-align:right}
-.sh-tbl th:nth-child(2),.sh-tbl td:nth-child(2){text-align:left}
-.sh-tbl th:nth-child(3),.sh-tbl td:nth-child(3){text-align:left}
+.sh-tbl td:nth-child(2),.sh-tbl td:nth-child(3){text-align:left}
 .sh-tbl th:first-child,.sh-tbl td:first-child{text-align:left;padding:0 4px;width:18px}
 .sh-tbl tr:hover td{background:rgba(255,255,255,.02)}
 .sh-drag-handle{color:#2d3a4a;cursor:grab;font-size:14px;line-height:1;user-select:none;display:inline-block;padding:2px 0}
@@ -86,10 +92,6 @@
 .sh-modal-err{font-size:11px;color:#f87171;margin-bottom:8px;display:none}
 
 /* ── Responsive breakpoints ── */
-@media (min-width:1280px){
-  .cw2{height:min(32vh,300px)}
-  .alloc-chart-wrap{height:min(22vh,200px)}
-}
 @media (max-width:1024px){
   .sh-statusbar{flex-wrap:wrap;gap:8px}
   .stock-panel-wide{overflow-x:auto}

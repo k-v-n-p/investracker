@@ -286,8 +286,8 @@
         </div>
       </div>
     </div>
-    <div class="cp" class="ret-chart-panel cp">
-      <div class="cp-hdr" class="cp-hdr-wrap">
+    <div class="cp ret-chart-panel">
+      <div class="cp-hdr cp-hdr-wrap">
         <div class="flex-row">
           <div class="cp-title" id="retChartTitle">Net equity over time</div>
           <div class="rv-toggle">
@@ -307,11 +307,11 @@
 
 <!-- ══ PROPERTY: COMPARE TAB ══ -->
 <div id="tab3" class="tab-content">
-  <div class="right-col" class="compare-full right-col">
+  <div class="right-col compare-full">
     <div class="cp">
       <div class="cp-hdr">
         <div class="cp-title">Property comparison · all profiles</div>
-        <div class="legend" class="legend-muted">bubble size = cash invested &nbsp;·&nbsp; x = years to recoup down payment &nbsp;·&nbsp; y = net equity at horizon</div>
+        <div class="legend legend-muted">bubble size = cash invested &nbsp;·&nbsp; x = years to recoup down payment &nbsp;·&nbsp; y = net equity at horizon</div>
       </div>
       <div class="compare-chart-wrap"><canvas id="compareCanvas"></canvas></div>
     </div>
@@ -331,7 +331,7 @@
   </div>
 
   <!-- Summary cards -->
-  <div class="mg" class="stock-cards-row mg">
+  <div class="mg stock-cards-row">
     <div class="mc blue">
       <div class="mc-lbl">Portfolio Value</div>
       <div class="mc-val" id="sh-total-val">—</div>
@@ -361,7 +361,7 @@
 
   <!-- Charts row -->
   <div class="chart-row">
-    <div class="cp" class="chart-row-main cp">
+    <div class="cp chart-row-main">
       <div class="cp-hdr">
         <div class="cp-title" id="sh-pnl-title">Portfolio P&amp;L · active days</div>
         <div class="flex-row">
@@ -375,7 +375,7 @@
       <div id="sh-pnl-hint" class="sh-pnl-hint"></div>
       <div class="cw"><canvas id="sh-perf-canvas"></canvas></div>
     </div>
-    <div class="cp" class="chart-row-side cp">
+    <div class="cp chart-row-side">
       <div class="cp-hdr">
         <div class="cp-title">Holdings allocation</div>
       </div>
@@ -387,17 +387,17 @@
   </div>
 
   <!-- Holdings table -->
-  <div class="sh-panel" class="stock-panel-wide sh-panel">
+  <div class="sh-panel stock-panel-wide">
     <div class="sh-panel-hdr">
-      <span class="slbl" style="margin:0;padding:0;border:none">Holdings</span>
+      <span class="slbl slbl-flush">Holdings</span>
       <button class="sh-add-btn" onclick="openAddModal()">+ Add Stock</button>
     </div>
     <table class="sh-tbl">
       <thead>
         <tr>
           <th scope="col" class="sh-th-sr">Reorder</th>
-          <th style="text-align:left">Ticker</th>
-          <th style="text-align:left">Company</th>
+          <th class="col-left">Ticker</th>
+          <th class="col-left">Company</th>
           <th>Shares</th>
           <th>Avg Cost</th>
           <th>Current</th>
