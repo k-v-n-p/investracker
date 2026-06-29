@@ -11,13 +11,16 @@ const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
 const AUTH_PASSWORD_HASH = process.env.AUTH_PASSWORD_HASH;
-function withHttps(origin) {
+function normalizeOrigin(origin) {
   const v = (origin || '').trim();
   if (!v) return v;
-  return /^https?:\/\//.test(v) ? v : `https://${v}`;
+  const withScheme = /^https?:\/\//.test(v) ? v : `https://${v}`;
+  return withScheme.replace(/\/+$/, '');
 }
 
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+const CORS_ORIGINS = process.env.CORS_ORIGIN === '*' || !process.env.CORS_ORIGIN
+  ? '*'
+  : process.env.CORS_ORIGIN.split(',').map(s => normalizeOrigin(s)).filter(Boolean);
 const USER_ID = process.env.USER_ID || 'owner';
 
 if (!MONGODB_URI || !JWT_SECRET || !AUTH_PASSWORD_HASH) {
@@ -28,7 +31,7 @@ if (!MONGODB_URI || !JWT_SECRET || !AUTH_PASSWORD_HASH) {
 const app = express();
 app.use(express.json({ limit: '2mb' }));
 app.use(cors({
-  origin: CORS_ORIGIN === '*' ? true : CORS_ORIGIN.split(',').map(s => withHttps(s.trim())),
+  origin: CORS_ORIGINS === '*' ? true : CORS_ORIGINS,
   methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -127,7 +130,10 @@ app.put('/api/data', authMiddleware, async (req, res) => {
 
 connectDb()
   .then(() => {
-    app.listen(PORT, () => console.log(`API listening on ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`API listening on ${PORT}`);
+      console.log('CORS allowed origins:', CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', '));
+    });
   })
   .catch(err => {
     console.error('MongoDB connection failed', err);
