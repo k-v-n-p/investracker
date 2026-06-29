@@ -1,3 +1,6 @@
+# Build output (Render static site)
+dist/
+
 # Local portfolio exports — never commit personal data
 portfolio_data_*.json
 

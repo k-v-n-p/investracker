@@ -1,11 +1,33 @@
 services:
   - type: web
+    name: investracker
+    runtime: static
+    buildCommand: node scripts/build-frontend.js
+    staticPublishPath: dist
+    buildFilter:
+      paths:
+        - index.html
+        - css/**
+        - js/**
+        - scripts/**
+    envVars:
+      - key: API_URL
+        fromService:
+          name: investracker-api
+          type: web
+          property: host
+
+  - type: web
     name: investracker-api
     runtime: node
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - server/**
+        - render.yaml
     envVars:
       - key: MONGODB_URI
         sync: false
@@ -14,6 +36,9 @@ services:
       - key: AUTH_PASSWORD_HASH
         sync: false
       - key: CORS_ORIGIN
-        sync: false
+        fromService:
+          name: investracker
+          type: web
+          property: host
       - key: NODE_VERSION
         value: "20"
