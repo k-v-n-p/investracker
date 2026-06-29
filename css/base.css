@@ -26,6 +26,7 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 /* ── Metric cards ── */
 .mg{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
 .mg2{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.mg2-5col{grid-template-columns:repeat(5,1fr)}
 .mc{background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 12px 10px}
 .mc .mc-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#334155;margin-bottom:4px}
 .mc .mc-val{font-size:17px;font-weight:600;color:#e2e8f0;letter-spacing:-.02em;line-height:1.2}
@@ -106,3 +107,18 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 .cloud-status.cloud-syncing{color:#60a5fa}
 .cloud-status.cloud-offline{color:#475569}
 .cloud-status.cloud-idle{color:#64748b}
+
+/* ── Responsive breakpoints ── */
+@media (max-width:1024px){
+  .mg{grid-template-columns:repeat(3,1fr)}
+  .mg2{grid-template-columns:repeat(2,1fr)}
+  .mg2-5col{grid-template-columns:repeat(3,1fr)}
+  .chart-row{flex-direction:column}
+  .chart-row-side{min-width:0}
+}
+@media (max-width:640px){
+  body{padding:16px 12px}
+  .mg{grid-template-columns:repeat(2,1fr)}
+  .mg2-5col{grid-template-columns:repeat(2,1fr)}
+  .hdr h1{font-size:16px}
+}

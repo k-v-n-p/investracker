@@ -130,10 +130,7 @@ app.put('/api/data', authMiddleware, async (req, res) => {
 
 connectDb()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`API listening on ${PORT}`);
-      console.log('CORS allowed origins:', CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', '));
-    });
+    app.listen(PORT, () => console.log(`API listening on ${PORT}`));
   })
   .catch(err => {
     console.error('MongoDB connection failed', err);

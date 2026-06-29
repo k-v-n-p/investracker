@@ -84,3 +84,10 @@
 .sh-modal-cancel:hover{color:#94a3b8}
 .sh-modal-err{font-size:11px;color:#f87171;margin-bottom:8px;display:none}
 
+/* ── Responsive breakpoints ── */
+@media (max-width:1024px){
+  .sh-statusbar{flex-wrap:wrap;gap:8px}
+  .stock-panel-wide{overflow-x:auto}
+  .sh-tbl{min-width:700px}
+}
+

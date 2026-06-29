@@ -109,4 +109,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .rv-toggle{display:flex;background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:2px;gap:0}
 .rv-btn{background:none;border:none;color:#64748b;font-size:11px;font-weight:500;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .15s}
 .rv-btn.active{background:#1e2535;color:#e2e8f0}
-</style>
+
+/* ── Responsive breakpoints ── */
+@media (max-width:1024px){
+  .tab-content.active{flex-direction:column}
+  .panel{width:100%}
+}
+@media (max-width:640px){
+  .tabs{overflow-x:auto;white-space:nowrap;width:100%}
+}
