@@ -1,4 +1,4 @@
 // Injected at build time on Render (prod). Empty = local-only mode.
 window.APP_CONFIG = {
-  API_URL: '__API_URL__',
+  API_URL: 'https://investracker-adyk.onrender.com',
 };
