@@ -23,6 +23,7 @@
 
 .sh-tbl{width:100%;border-collapse:collapse}
 .sh-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;padding:0 10px 10px;text-align:left;white-space:nowrap}
+.sh-tbl th.sh-th-sr{font-size:0;letter-spacing:0;line-height:0;color:transparent}
 .sh-tbl td{font-size:12px;color:#94a3b8;padding:10px;border-top:1px solid rgba(255,255,255,.04);vertical-align:middle}
 .sh-tbl th:nth-child(n+4),.sh-tbl td:nth-child(n+4){text-align:right}
 .sh-tbl th:nth-child(2),.sh-tbl td:nth-child(2){text-align:left}
