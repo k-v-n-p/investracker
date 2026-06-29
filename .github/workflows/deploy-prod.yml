@@ -1,0 +1,67 @@
+name: Deploy prod
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-api:
+    name: Deploy API to Render
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Trigger Render deploy hook
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "RENDER_DEPLOY_HOOK not set — skip (configure Render manually or add secret)"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
+          echo "Render deploy triggered"
+
+  deploy-pages:
+    name: Deploy frontend to GitHub Pages
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject production API URL
+        env:
+          API_URL: ${{ vars.API_URL }}
+        run: |
+          python - <<'PY'
+          import os, pathlib
+          p = pathlib.Path("js/00-config.js")
+          text = p.read_text(encoding="utf-8")
+          url = os.environ.get("API_URL", "").strip()
+          text = text.replace("__API_URL__", url.replace("\\", "\\\\"))
+          p.write_text(text, encoding="utf-8")
+          print("API_URL injected:", url or "(empty — local mode)")
+          PY
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          exclude-paths: |
+            server
+            .cursor
+            .github
+            render.yaml
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

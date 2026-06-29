@@ -1,0 +1,85 @@
+/* ── P&L chart controls ── */
+.sh-view-toggle{display:flex;background:#0d0f14;border:1px solid rgba(255,255,255,.07);border-radius:6px;overflow:hidden}
+.sh-vt-btn{background:none;border:none;color:#475569;font-size:10px;font-weight:600;padding:4px 9px;cursor:pointer;letter-spacing:.04em;transition:all .15s}
+.sh-vt-btn.active{background:#1e2535;color:#94a3b8}
+.sh-backfill-btn{background:none;border:1px solid rgba(255,255,255,.07);border-radius:6px;color:#475569;font-size:10px;padding:4px 8px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.sh-backfill-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.15)}
+.sh-backfill-btn:disabled{opacity:.4;cursor:not-allowed}
+.cw2{position:relative;width:100%;height:250px}
+
+/* ── Stock dashboard ── */
+.sh-statusbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sh-status{font-size:10px;color:#475569}
+.sh-refresh{background:none;border:1px solid rgba(255,255,255,.08);border-radius:6px;color:#475569;font-size:11px;padding:4px 10px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.sh-refresh:hover{color:#94a3b8;border-color:rgba(255,255,255,.2)}
+.sh-spin{display:inline-block;line-height:1}
+.sh-refresh.spinning .sh-spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.sh-panel{background:#161922;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px}
+.sh-panel-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sh-add-btn{background:#1e3a5f;border:1px solid rgba(59,130,246,.5);border-radius:8px;color:#60a5fa;font-size:12px;font-weight:500;padding:6px 12px;cursor:pointer;transition:all .15s}
+.sh-add-btn:hover{background:#243d5f;border-color:#3b82f6}
+
+.sh-tbl{width:100%;border-collapse:collapse}
+.sh-tbl th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;padding:0 10px 10px;text-align:left;white-space:nowrap}
+.sh-tbl td{font-size:12px;color:#94a3b8;padding:10px;border-top:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.sh-tbl th:nth-child(n+4),.sh-tbl td:nth-child(n+4){text-align:right}
+.sh-tbl th:nth-child(2),.sh-tbl td:nth-child(2){text-align:left}
+.sh-tbl th:nth-child(3),.sh-tbl td:nth-child(3){text-align:left}
+.sh-tbl th:first-child,.sh-tbl td:first-child{text-align:left;padding:0 4px;width:18px}
+.sh-tbl tr:hover td{background:rgba(255,255,255,.02)}
+.sh-drag-handle{color:#2d3a4a;cursor:grab;font-size:14px;line-height:1;user-select:none;display:inline-block;padding:2px 0}
+.sh-drag-handle:active{cursor:grabbing}
+.sh-dragging td{opacity:.35}
+.sh-drag-target td{border-top:2px solid #3b82f6!important}
+
+.sh-badge{display:inline-block;background:#1e2535;border:1px solid rgba(255,255,255,.1);border-radius:5px;font-size:11px;font-weight:700;color:#e2e8f0;padding:2px 7px;letter-spacing:.03em}
+.sh-pos{color:#10b981}
+.sh-neg{color:#f87171}
+.sh-row-acts{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .15s}
+.sh-tbl tr:hover .sh-row-acts{opacity:1}
+.sh-row-btn{background:none;border:1px solid rgba(255,255,255,.06);border-radius:5px;color:#475569;font-size:11px;cursor:pointer;padding:2px 6px;line-height:1.4;transition:all .12s}
+.sh-row-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.15)}
+.sh-row-btn.del:hover{color:#f87171;border-color:rgba(248,113,113,.2);background:rgba(248,113,113,.06)}
+.sh-empty{text-align:center;padding:32px 0;color:#334155;font-size:13px}
+.sh-col-toggle{cursor:pointer;user-select:none;transition:color .12s}
+.sh-col-toggle:hover{color:#64748b}
+.sh-col-mode{font-size:8px;color:#3b82f6;margin-left:2px;font-weight:600;vertical-align:middle}
+
+.sh-skel{background:linear-gradient(90deg,#1e2535 25%,#252b3b 50%,#1e2535 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;height:13px;display:inline-block;vertical-align:middle}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.sh-alloc-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:center}
+.sh-alloc-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#64748b}
+.sh-alloc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── Add Stock modal ── */
+.sh-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center}
+.sh-modal-overlay.open{display:flex}
+.sh-modal{background:#161922;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;width:390px;max-width:calc(100vw - 32px)}
+.sh-modal-title{font-size:15px;font-weight:600;color:#f1f5f9;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.sh-modal-close{background:none;border:none;color:#475569;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;transition:color .15s}
+.sh-modal-close:hover{color:#94a3b8}
+.sh-field{margin-bottom:14px}
+.sh-field label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;display:block;margin-bottom:6px}
+.sh-field input{width:100%;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:13px;font-weight:500;padding:9px 12px;outline:none;-moz-appearance:textfield}
+.sh-field input::-webkit-inner-spin-button{-webkit-appearance:none}
+.sh-field input:focus{border-color:#3b82f6}
+.sh-field input::placeholder{color:#334155;font-weight:400;font-size:12px}
+.sh-search-wrap{position:relative}
+.sh-search-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1a1e2a;border:1px solid rgba(255,255,255,.1);border-radius:8px;z-index:300;overflow:hidden;display:none;max-height:200px;overflow-y:auto}
+.sh-search-drop.open{display:block}
+.sh-search-item{padding:9px 12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:background .1s}
+.sh-search-item:hover{background:rgba(255,255,255,.05)}
+.sh-search-ticker{font-size:12px;font-weight:700;color:#e2e8f0;white-space:nowrap}
+.sh-search-name{font-size:11px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-modal-row{display:flex;gap:10px}
+.sh-modal-row .sh-field{flex:1}
+.sh-modal-actions{display:flex;gap:8px;margin-top:4px}
+.sh-modal-submit{flex:1;background:#3b82f6;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;padding:10px;cursor:pointer;transition:background .15s}
+.sh-modal-submit:hover{background:#2563eb}
+.sh-modal-cancel{background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#64748b;font-size:13px;padding:10px 16px;cursor:pointer;transition:all .15s}
+.sh-modal-cancel:hover{color:#94a3b8}
+.sh-modal-err{font-size:11px;color:#f87171;margin-bottom:8px;display:none}
+

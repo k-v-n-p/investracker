@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/cursor-hooks@latest/schema/hooks.schema.json",
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/sync-readme-context.ps1",
+        "matcher": "Write|StrReplace|ApplyPatch|EditNotebook"
+      }
+    ]
+  }
+}

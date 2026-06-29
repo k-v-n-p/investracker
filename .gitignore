@@ -1,0 +1,13 @@
+# Local portfolio exports — never commit personal data
+portfolio_data_*.json
+
+# Server secrets and dependencies
+server/node_modules/
+server/.env
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

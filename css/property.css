@@ -1,0 +1,112 @@
+/* ── Profile bar ── */
+.profile-bar{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:3px}
+.profile-bar::-webkit-scrollbar{height:3px}
+.profile-bar::-webkit-scrollbar-track{background:transparent}
+.profile-bar::-webkit-scrollbar-thumb{background:#252a38;border-radius:2px}
+.p-pill{display:flex;align-items:center;gap:7px;background:#161922;border:1.5px solid rgba(255,255,255,.08);border-radius:10px;padding:7px 10px;cursor:pointer;transition:border-color .2s,background .2s;user-select:none;flex-shrink:0}
+.p-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.p-name{font-size:12px;font-weight:500;color:#64748b;transition:color .2s;white-space:nowrap}
+.p-icons{display:flex;gap:1px;max-width:0;overflow:hidden;transition:max-width .22s ease,margin-left .22s ease}
+.p-pill:hover .p-icons{max-width:80px;margin-left:5px}
+.p-icon{font-size:11px;color:#475569;cursor:pointer;padding:2px 5px;border-radius:4px;line-height:1;transition:color .12s,background .12s;flex-shrink:0;white-space:nowrap}
+.p-icon:hover{color:#cbd5e1;background:rgba(255,255,255,.07)}
+.p-icon.del:hover{color:#f87171;background:rgba(248,113,113,.1)}
+.p-name-input{background:none;border:none;outline:none;font-size:12px;font-weight:500;padding:0;width:76px}
+.p-add{display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;background:#161922;border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;cursor:pointer;color:#475569;font-size:17px;font-weight:300;line-height:1;transition:all .15s;align-self:center}
+.p-add:hover{border-color:rgba(255,255,255,.35);color:#94a3b8}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:0;margin-bottom:16px;background:#161922;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:3px;width:fit-content}
+.tab-btn{background:none;border:none;color:#64748b;font-size:13px;font-weight:500;padding:6px 22px;border-radius:7px;cursor:pointer;transition:all .15s}
+.tab-btn.active{background:#1e2535;color:#e2e8f0}
+
+/* ── Tab layout ── */
+.tab-content{display:none}
+.tab-content.active{display:flex;gap:16px;max-width:1140px}
+.panel{background:#161922;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;width:305px;flex-shrink:0;align-self:start;transition:border-left-color .3s}
+.right-col{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0}
+
+/* ── Sliders ── */
+.sg{margin-bottom:14px}
+.sg-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.sg-hdr label{font-size:12px;color:#94a3b8}
+.sg-hdr .val{font-size:13px;font-weight:600;color:#e2e8f0}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#252a38;border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#3b82f6;border:2px solid #0d0f14;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#3b82f6;border:2px solid #0d0f14;cursor:pointer;border-style:solid}
+.hint{font-size:10px;color:#475569;margin-top:5px}
+.hint b{font-weight:600;color:#64748b}
+
+/* ── Number input ── */
+.ni-wrap{position:relative;margin-top:5px}
+.ni-pfx{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#64748b;pointer-events:none}
+.ni-wrap input[type=number]{width:100%;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:13px;font-weight:500;padding:8px 10px 8px 22px;outline:none;-moz-appearance:textfield}
+.ni-wrap input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.ni-wrap input[type=number]:focus{border-color:#3b82f6}
+
+/* ── Horizon pills ── */
+.h-pills{display:flex;gap:7px;margin-top:5px}
+.h-pill{flex:1;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#64748b;font-size:12px;font-weight:500;padding:7px 0;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.h-pill.active{background:#1e3a5f;border-color:#3b82f6;color:#60a5fa}
+
+/* ── Loan summary pills ── */
+.info-row{display:flex;gap:7px;margin-top:4px}
+.ip{flex:1;background:#1a1e2a;border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:8px 10px}
+.ip .ip-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#334155;margin-bottom:2px}
+.ip .ip-val{font-size:12px;font-weight:600;color:#94a3b8}
+
+/* ── Opportunity cost comparison section ── */
+.opp-section{margin-top:10px}
+.opp-divider{display:flex;align-items:center;gap:10px;margin:12px 0 10px}
+.opp-divider-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;white-space:nowrap}
+.opp-divider-line{flex:1;height:1px;background:rgba(255,255,255,.05)}
+.opp-info{background:#1a1e2a;border:1px solid rgba(167,139,250,.15);border-radius:8px;padding:8px 11px;font-size:10px;color:#64748b;margin-bottom:10px;line-height:1.8}
+.opp-info b{color:#94a3b8}
+.opp-sip-warn{font-size:10px;color:#f87171;margin-top:4px;display:none}
+
+/* ── Property metadata row ── */
+.prop-meta{display:flex;gap:8px;margin-bottom:14px;align-items:flex-end}
+.pm-f{flex:1}
+.pm-f label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;display:block;margin-bottom:4px}
+.pm-f input{width:100%;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#e2e8f0;font-size:12px;padding:6px 10px;outline:none;-moz-appearance:textfield}
+.pm-f input[type=month]{color-scheme:dark;padding:5px 8px}
+.pm-f input::-webkit-inner-spin-button{-webkit-appearance:none}
+.pm-f input:focus{border-color:#3b82f6}
+.pm-derived{font-size:10px;color:#475569;white-space:nowrap;padding-bottom:8px;flex-shrink:0}
+
+/* ── Payment mode toggle ── */
+.pay-wrap{margin-bottom:14px}
+.pay-toggle{display:flex;background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:3px;gap:0}
+.pay-btn{flex:1;background:none;border:none;color:#64748b;font-size:12px;font-weight:500;padding:6px 0;border-radius:6px;cursor:pointer;transition:all .15s}
+.pay-btn.active{background:#1e2535;color:#e2e8f0}
+
+/* ── CLP construction schedule ── */
+.clp-note{background:#1a1e2a;border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:10px;color:#475569;line-height:1.8}
+.clp-note b{color:#64748b}
+.clp-toolbar{display:flex;gap:6px;margin-bottom:8px}
+.clp-tbtn{flex:1;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#64748b;font-size:11px;font-weight:500;padding:5px 0;cursor:pointer;text-align:center;transition:all .15s}
+.clp-tbtn:hover{color:#94a3b8;border-color:rgba(255,255,255,.2)}
+.tranche-tbl{width:100%;border-collapse:collapse}
+.tranche-tbl td{padding:3px 2px;vertical-align:middle}
+.t-lbl{background:#1e2535;border:1px solid rgba(255,255,255,.06);border-radius:6px;color:#e2e8f0;font-size:11px;padding:4px 7px;outline:none;width:100%;font-family:inherit}
+.t-num{background:#1e2535;border:1px solid rgba(255,255,255,.06);border-radius:6px;color:#e2e8f0;font-size:11px;padding:4px 6px;outline:none;-moz-appearance:textfield;text-align:right;width:100%}
+.t-lbl:focus,.t-num:focus{border-color:#3b82f6}
+.t-num::-webkit-inner-spin-button{-webkit-appearance:none}
+.t-unit{font-size:10px;color:#475569;padding:0 3px;white-space:nowrap}
+.t-del{background:none;border:none;color:#475569;cursor:pointer;font-size:12px;padding:2px 5px;border-radius:4px;line-height:1;transition:color .12s}
+.t-del:hover{color:#f87171}
+.tranche-sum{font-size:10px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.05)}
+.tranche-sum.ok{color:#10b981}
+.tranche-sum.warn{color:#f87171}
+
+/* ── Pre-possession info bar (CLP mode, right column) ── */
+.pre-pos-bar{background:#1a1e2a;border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:10px 14px;display:flex;gap:20px;flex-wrap:wrap}
+.ppb-item{display:flex;flex-direction:column;gap:2px}
+.ppb-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#334155}
+.ppb-val{font-size:12px;font-weight:600;color:#94a3b8}
+
+/* ── Returns chart view toggle ── */
+.rv-toggle{display:flex;background:#1a1e2a;border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:2px;gap:0}
+.rv-btn{background:none;border:none;color:#64748b;font-size:11px;font-weight:500;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all .15s}
+.rv-btn.active{background:#1e2535;color:#e2e8f0}
+</style>

@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: investracker-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AUTH_PASSWORD_HASH
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: NODE_VERSION
+        value: "20"

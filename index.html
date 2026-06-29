@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/property.css">
+<link rel="stylesheet" href="css/stock.css">
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">📊</div>
+    <div class="login-title">Investment Dashboard</div>
+    <div class="login-sub">Enter your password to continue</div>
+    <input class="login-input" type="password" id="login-pass" placeholder="Password"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Unlock</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-left" onclick="switchDashboard()">
+    <span id="profileDot"></span>
+    <div>
+      <div class="flex-row">
+        <h1 id="titleActive">Property Investment Calculator</h1>
+        <span id="titleSwitch" class="title-switch">⇄ Stock Portfolio</span>
+      </div>
+      <p id="hdrSub">Hyderabad · NRI Dashboard</p>
+    </div>
+  </div>
+  <div class="cur-controls">
+    <div id="curToggleWrap" class="cur-toggle">
+      <button class="cur-btn active" id="btnINR" onclick="setCurrency('INR')">₹ INR</button>
+      <button class="cur-btn" id="btnUSD" onclick="setCurrency('USD')">$ USD</button>
+    </div>
+    <div id="rateWrapEl" class="rate-wrap">
+      <span>₹/$</span>
+      <input type="number" id="exRate" value="93" min="50" max="150" step="0.5" oninput="update()">
+    </div>
+    <button class="gear-btn" onclick="openSettings()" title="Settings">⚙</button>
+  </div>
+</div>
+
+<!-- ══ PROPERTY DASHBOARD ══ -->
+<div id="propertyDash">
+
+<div class="profile-bar" id="profileBar"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tBtn1" onclick="switchTab(1)">Financing</button>
+  <button class="tab-btn" id="tBtn2" onclick="switchTab(2)">Returns</button>
+  <button class="tab-btn hidden" id="tBtn3" onclick="switchTab(3)">Compare</button>
+</div>
+
+<!-- ══ PROPERTY: FINANCING TAB ══ -->
+<div id="tab1" class="tab-content active">
+  <div class="panel" id="panel1">
+    <!-- Property metadata -->
+    <div class="prop-meta">
+      <div class="pm-f">
+        <label>Sq. ft.</label>
+        <input type="number" id="sqftVal" value="1200" min="0" step="10" oninput="update()">
+      </div>
+      <div class="pm-f">
+        <label>Possession</label>
+        <input type="month" id="possDateVal" oninput="update()">
+      </div>
+      <span id="pricePerSqft" class="pm-derived">—</span>
+    </div>
+    <!-- Payment mode toggle -->
+    <div class="pay-wrap">
+      <div class="pay-toggle">
+        <button class="pay-btn active" id="payOTP" onclick="setPayMode('OTP')">One Time Payment</button>
+        <button class="pay-btn" id="payCLP" onclick="setPayMode('CLP')">Under Construction</button>
+      </div>
+    </div>
+    <div class="slbl">Property &amp; Financing</div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Property value</label><span class="val" id="propOut">—</span></div>
+      <input type="range" id="propVal" min="2500000" max="50000000" step="500000" value="10000000" oninput="onProp()">
+    </div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Cash payment</label><span class="val" id="cashOut">—</span></div>
+      <input type="range" id="cashVal" min="0" max="10000000" step="500000" value="5000000" oninput="onCash()">
+      <div class="hint" id="loanHint">Loan = —</div>
+    </div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Loan amount</label><span class="val" id="loanOut">—</span></div>
+      <input type="range" id="loanVal" min="0" max="10000000" step="500000" value="5000000" oninput="onLoan()">
+      <div class="hint" id="cashHint">Cash = —</div>
+    </div>
+    <div class="divider"></div>
+    <div class="slbl">Loan Parameters</div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Interest rate</label><span class="val" id="rateOut">9.00%</span></div>
+      <input type="range" id="rateVal" min="7" max="12" step="0.25" value="9" oninput="update()">
+    </div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Total monthly payment</label><span class="val" id="prepayOut">—</span></div>
+      <input type="range" id="prepayVal" min="0" max="1000000" step="5000" value="300000" oninput="update()">
+      <div class="hint" id="prepayHint">—</div>
+    </div>
+    <!-- CLP Construction Schedule (hidden in OTP mode) -->
+    <div id="clp-section" class="hidden">
+      <div class="divider"></div>
+      <div class="slbl">Construction Schedule</div>
+      <div class="clp-note">
+        <b>No pre-EMI interest</b> — loan disbursed at possession<br>
+        Cash tranches paid from savings during construction.
+      </div>
+      <div id="poss-month-row" class="clp-note" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span>Construction period</span>
+        <b id="possMonthOut" style="color:#94a3b8;font-size:12px">36 mo</b>
+      </div>
+      <div class="clp-toolbar">
+        <button class="clp-tbtn" onclick="equalSplitPreset()">= Equal split</button>
+        <button class="clp-tbtn" onclick="addTranche()">+ Add tranche</button>
+      </div>
+      <table class="tranche-tbl">
+        <thead>
+          <tr>
+            <td style="font-size:9px;color:#334155;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding-bottom:5px">Label</td>
+            <td style="font-size:9px;color:#334155;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding-bottom:5px;text-align:right" colspan="2">%&nbsp;of&nbsp;Cash</td>
+            <td style="font-size:9px;color:#334155;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding-bottom:5px;text-align:right" colspan="2">Month</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody id="tranche-tbody"></tbody>
+      </table>
+      <div id="tranche-sum" class="tranche-sum warn">Total: 0%</div>
+    </div>
+  </div>
+  <div class="right-col">
+    <!-- Pre-possession summary bar (CLP only) -->
+    <div id="pre-pos-bar" class="pre-pos-bar hidden">
+      <div class="ppb-item">
+        <span class="ppb-lbl">Construction Period</span>
+        <span class="ppb-val" id="ppb-period">—</span>
+      </div>
+      <div class="ppb-item">
+        <span class="ppb-lbl">Pre-possession Outflow</span>
+        <span class="ppb-val" id="ppb-preout">—</span>
+      </div>
+      <div class="ppb-item">
+        <span class="ppb-lbl">Loan Starts</span>
+        <span class="ppb-val" id="ppb-loanstart">—</span>
+      </div>
+      <div class="ppb-item">
+        <span class="ppb-lbl">Pre-EMI Interest</span>
+        <span class="ppb-val" style="color:#10b981">None ✓</span>
+      </div>
+    </div>
+    <div class="mg">
+      <div class="mc blue"><div class="mc-lbl">Base EMI</div><div class="mc-val" id="m1EMI">—</div><div class="mc-sub">per month</div></div>
+      <div class="mc"><div class="mc-lbl">Payoff in</div><div class="mc-val" id="m1Mo">—</div><div class="mc-sub" id="m1MoSub">—</div></div>
+      <div class="mc red"><div class="mc-lbl">Total interest</div><div class="mc-val" id="m1Int">—</div><div class="mc-sub">with prepayment</div></div>
+      <div class="mc green"><div class="mc-lbl">Interest saved</div><div class="mc-val" id="m1Saved">—</div><div class="mc-sub">vs 20-yr no-prepay</div></div>
+      <div class="mc amber"><div class="mc-lbl">Total outflow</div><div class="mc-val" id="m1Total">—</div><div class="mc-sub">cash + loan + interest</div></div>
+    </div>
+    <div class="cp">
+      <div class="cp-hdr">
+        <div class="cp-title">Loan balance over time</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#3b82f6"></span>With prepayment</span>
+          <span><span class="ld" style="background:#ef4444"></span>No prepayment (20yr)</span>
+          <span><span class="ld" style="background:rgba(16,185,129,0.6)"></span>Interest saved</span>
+        </div>
+      </div>
+      <div class="cw"><canvas id="loanChart" role="img" aria-label="Loan balance over time"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROPERTY: RETURNS TAB ══ -->
+<div id="tab2" class="tab-content">
+  <div class="panel" id="panel2">
+    <div class="slbl">Returns Parameters</div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Appreciation rate</label><span class="val" id="appOut">8.0% p.a.</span></div>
+      <input type="range" id="appVal" min="0" max="20" step="0.5" value="8" oninput="update()">
+      <div class="hint">Assumed average annual appreciation</div>
+    </div>
+    <div class="sg" style="margin-top:14px">
+      <label style="font-size:12px;color:#94a3b8;display:block;margin-bottom:5px">Monthly rental income</label>
+      <div class="ni-wrap">
+        <span class="ni-pfx" id="rentalPfx">₹</span>
+        <input type="number" id="rentalVal" value="0" min="0" step="1000" oninput="onRental()">
+      </div>
+      <div class="hint">Reduces cumulative outflow over time</div>
+    </div>
+    <div class="divider"></div>
+    <div class="slbl">Time Horizon</div>
+    <div class="h-pills">
+      <div class="h-pill" id="hp3" onclick="setHorizon(3)">3 yr</div>
+      <div class="h-pill active" id="hp5" onclick="setHorizon(5)">5 yr</div>
+      <div class="h-pill" id="hp10" onclick="setHorizon(10)">10 yr</div>
+    </div>
+    <div class="divider"></div>
+    <div class="slbl">Loan Summary</div>
+    <div class="info-row">
+      <div class="ip"><div class="ip-lbl">Loan ends</div><div class="ip-val" id="loanEndLbl">—</div></div>
+      <div class="ip"><div class="ip-lbl">Total paid</div><div class="ip-val" id="totalPaidLbl">—</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="slbl">If You Invested Instead</div>
+    <div class="opp-info">
+      <b>Invest &amp; Defer</b>: Instead of buying now, invest the same monthly budget in equity/MF at the rate below + pay rent. Buy the property outright with the corpus when the loan would have ended.
+    </div>
+    <div class="sg">
+      <div class="sg-hdr"><label>Alternative investment return</label><span class="val" id="altRetOut">10.0% p.a.</span></div>
+      <input type="range" id="altRetVal" min="4" max="20" step="0.5" value="10" oninput="update()">
+      <div class="hint">NIFTY 50 ~12% · FD ~7% · NRE FD ~7.5%</div>
+    </div>
+    <div class="opp-info" style="margin-top:6px">
+      Monthly investable (SIP): <b id="opp-sip-display">—</b>
+      &nbsp;·&nbsp; Lump-sum at start: <b id="opp-lump-display">—</b>
+    </div>
+    <div id="opp-sip-warn" class="opp-sip-warn">⚠ Rent exceeds EMI — no monthly SIP possible, lump-sum only.</div>
+  </div>
+  <div class="right-col">
+    <div class="mg2">
+      <div class="mc">
+        <div class="mc-lbl">At Loan End</div>
+        <div class="mc-val" id="m2PropEnd">—</div>
+        <div class="mc-profit" id="m2PrEnd">—</div>
+        <div class="mc-sub">property · net equity</div>
+      </div>
+      <div class="mc">
+        <div class="mc-lbl" id="m2HLbl">At 5-Year Mark</div>
+        <div class="mc-val" id="m2PropH">—</div>
+        <div class="mc-profit" id="m2PrH">—</div>
+        <div class="mc-sub">property · net equity</div>
+      </div>
+      <div class="mc amber">
+        <div class="mc-lbl">Recoup Down Payment</div>
+        <div class="mc-val" id="m2BE">—</div>
+        <div class="mc-sub" id="m2BESub">—</div>
+      </div>
+      <div class="mc teal">
+        <div class="mc-lbl" id="m2RLbl">Rental at 5yr</div>
+        <div class="mc-val" id="m2Rental">₹0</div>
+        <div class="mc-sub">cumulative collected</div>
+      </div>
+    </div>
+    <!-- Opportunity cost comparison cards -->
+    <div class="opp-section">
+      <div class="opp-divider">
+        <span class="opp-divider-line"></span>
+        <span class="opp-divider-label">Invest &amp; Defer Comparison (at loan payoff)</span>
+        <span class="opp-divider-line"></span>
+      </div>
+      <div class="mg2" style="grid-template-columns:repeat(5,1fr)">
+        <div class="mc purple">
+          <div class="mc-lbl">Corpus at Payoff</div>
+          <div class="mc-val" id="opp-corpus">—</div>
+          <div class="mc-sub">investment value</div>
+        </div>
+        <div class="mc">
+          <div class="mc-lbl">Rent Paid (total)</div>
+          <div class="mc-val" id="opp-rent">—</div>
+          <div class="mc-sub">cumulative outflow</div>
+        </div>
+        <div class="mc sky">
+          <div class="mc-lbl">Net Corpus</div>
+          <div class="mc-val" id="opp-net">—</div>
+          <div class="mc-sub">corpus − rent</div>
+        </div>
+        <div class="mc teal">
+          <div class="mc-lbl">Property Then</div>
+          <div class="mc-val" id="opp-propval">—</div>
+          <div class="mc-sub">appreciated price</div>
+        </div>
+        <div class="mc" id="opp-verdict-card">
+          <div class="mc-lbl">Surplus / Deficit</div>
+          <div class="mc-val" id="opp-surplus">—</div>
+          <div class="mc-sub" id="opp-verdict">vs cash purchase</div>
+        </div>
+      </div>
+    </div>
+    <div class="cp" class="ret-chart-panel cp">
+      <div class="cp-hdr" class="cp-hdr-wrap">
+        <div class="flex-row">
+          <div class="cp-title" id="retChartTitle">Net equity over time</div>
+          <div class="rv-toggle">
+            <button class="rv-btn active" id="rvBtn1" onclick="switchRetChart('equity')">Equity</button>
+            <button class="rv-btn" id="rvBtn2" onclick="switchRetChart('compare')">Buy vs Invest</button>
+          </div>
+        </div>
+        <div class="legend" id="ret-legend">
+          <span><span class="ld" style="background:#10b981"></span>Net equity (gain)</span>
+          <span><span class="ld" style="background:#ef4444"></span>Net equity (deficit)</span>
+        </div>
+      </div>
+      <div class="cw2"><canvas id="retChart" role="img" aria-label="Net equity over time with milestone markers"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROPERTY: COMPARE TAB ══ -->
+<div id="tab3" class="tab-content">
+  <div class="right-col" class="compare-full right-col">
+    <div class="cp">
+      <div class="cp-hdr">
+        <div class="cp-title">Property comparison · all profiles</div>
+        <div class="legend" class="legend-muted">bubble size = cash invested &nbsp;·&nbsp; x = years to recoup down payment &nbsp;·&nbsp; y = net equity at horizon</div>
+      </div>
+      <div class="compare-chart-wrap"><canvas id="compareCanvas"></canvas></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /propertyDash -->
+
+<!-- ══ STOCK DASHBOARD ══ -->
+<div id="stockDash" class="hidden">
+
+  <div class="sh-statusbar">
+    <span id="sh-status" class="sh-status">No prices loaded · open ⚙ Settings to add your API key</span>
+    <button id="sh-refresh-btn" class="sh-refresh" onclick="refreshStockData(true)">
+      <span class="sh-spin">↻</span> Refresh
+    </button>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="mg" class="stock-cards-row mg">
+    <div class="mc blue">
+      <div class="mc-lbl">Portfolio Value</div>
+      <div class="mc-val" id="sh-total-val">—</div>
+      <div class="mc-sub">market value</div>
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Total Invested</div>
+      <div class="mc-val" id="sh-invested">—</div>
+      <div class="mc-sub">cost basis</div>
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Total Return</div>
+      <div class="mc-val" id="sh-ret-dollar">—</div>
+      <div class="mc-profit" id="sh-ret-pct">—</div>
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Today's Gain</div>
+      <div class="mc-val" id="sh-today">—</div>
+      <div class="mc-sub">day change</div>
+    </div>
+    <div class="mc amber">
+      <div class="mc-lbl">Positions</div>
+      <div class="mc-val" id="sh-count">0</div>
+      <div class="mc-sub">holdings</div>
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="chart-row">
+    <div class="cp" class="chart-row-main cp">
+      <div class="cp-hdr">
+        <div class="cp-title" id="sh-pnl-title">Portfolio P&amp;L · active days</div>
+        <div class="flex-row">
+          <div class="sh-view-toggle">
+            <button class="sh-vt-btn active" id="sh-vt-daily" onclick="setPnlView('daily')">Daily</button>
+            <button class="sh-vt-btn" id="sh-vt-monthly" onclick="setPnlView('monthly')">Monthly</button>
+          </div>
+          <button class="sh-backfill-btn" id="sh-backfill-btn" onclick="backfillPnlHistory()">↺ Backfill</button>
+        </div>
+      </div>
+      <div class="cw"><canvas id="sh-perf-canvas"></canvas></div>
+    </div>
+    <div class="cp" class="chart-row-side cp">
+      <div class="cp-hdr">
+        <div class="cp-title">Holdings allocation</div>
+      </div>
+      <div class="alloc-chart-wrap">
+        <canvas id="sh-alloc-canvas"></canvas>
+      </div>
+      <div id="sh-alloc-legend" class="sh-alloc-legend"></div>
+    </div>
+  </div>
+
+  <!-- Holdings table -->
+  <div class="sh-panel" class="stock-panel-wide sh-panel">
+    <div class="sh-panel-hdr">
+      <span class="slbl" style="margin:0;padding:0;border:none">Holdings</span>
+      <button class="sh-add-btn" onclick="openAddModal()">+ Add Stock</button>
+    </div>
+    <table class="sh-tbl">
+      <thead>
+        <tr>
+          <th></th>
+          <th style="text-align:left">Ticker</th>
+          <th style="text-align:left">Company</th>
+          <th>Shares</th>
+          <th>Avg Cost</th>
+          <th>Current</th>
+          <th>Day $</th>
+          <th>Weight</th>
+          <th class="sh-col-toggle" onclick="toggleHoldingsCol('invested')">Invested<span class="sh-col-mode" id="sh-col-invested-mode">$</span></th>
+          <th class="sh-col-toggle" onclick="toggleHoldingsCol('returns')">Returns<span class="sh-col-mode" id="sh-col-returns-mode">$</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="sh-tbody">
+        <tr><td colspan="11" class="sh-empty">No holdings yet — click + Add Stock to get started.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /stockDash -->
+
+<!-- ══ SHARED: ADD STOCK MODAL ══ -->
+<div class="sh-modal-overlay" id="sh-modal-overlay">
+  <div class="sh-modal">
+    <div class="sh-modal-title">
+      <span id="sh-modal-heading">Add Stock</span>
+      <button class="sh-modal-close" onclick="closeAddModal()">✕</button>
+    </div>
+    <div class="sh-field">
+      <label>Ticker Symbol or Company Name</label>
+      <div class="sh-search-wrap">
+        <input type="text" id="sh-ticker-input" placeholder="e.g. AAPL or Apple Inc." oninput="onTickerInput()" autocomplete="off">
+        <div class="sh-search-drop" id="sh-search-drop"></div>
+      </div>
+    </div>
+    <div class="sh-field">
+      <label>Company Name</label>
+      <input type="text" id="sh-company-name" placeholder="Auto-filled from search, or enter manually">
+    </div>
+    <div id="sh-modal-err" class="sh-modal-err"></div>
+    <div class="sh-modal-row">
+      <div class="sh-field">
+        <label>Shares</label>
+        <input type="number" id="sh-shares-input" placeholder="1.5" min="0.0001" step="any">
+      </div>
+      <div class="sh-field">
+        <label>Avg Price Per Share ($)</label>
+        <input type="number" id="sh-price-input" placeholder="150.00" min="0.01" step="any">
+      </div>
+    </div>
+    <div class="sh-modal-actions">
+      <button class="sh-modal-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="sh-modal-submit" id="sh-modal-submit" onclick="confirmAddStock()">Add to Portfolio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHARED: SETTINGS ══ -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettings()"></div>
+<div class="settings-panel" id="settings-panel">
+  <div class="s-hdr">
+    <span class="s-title">Settings</span>
+    <button class="s-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="s-divider"></div>
+  <div class="s-field">
+    <label class="s-label-row">
+      Alpha Vantage API Key 1
+      <span id="s-key1-status" class="s-label-status"></span>
+    </label>
+    <input type="text" id="settings-api-key" placeholder="Paste your primary API key" onblur="saveSettings()">
+  </div>
+  <div class="s-field">
+    <label class="s-label-row">
+      API Key 2 (fallback)
+      <span id="s-key2-status" class="s-label-status"></span>
+    </label>
+    <input type="text" id="settings-api-key-2" placeholder="Used when Key 1 hits the daily limit" onblur="saveSettings()">
+    <div class="s-hint">Free key at <a href="https://www.alphavantage.co/support/#api-key" target="_blank">alphavantage.co</a> · 25 requests / day per key</div>
+  </div>
+  <div class="s-divider"></div>
+  <div class="s-section s-section-spaced">Cloud sync</div>
+  <div id="cloud-sync-status" class="s-hint cloud-status cloud-offline">Checking…</div>
+  <button class="s-btn" id="cloud-sync-btn" onclick="CloudSync.syncNow()">↻ Sync now</button>
+  <div class="s-divider"></div>
+  <div class="s-section s-section-spaced">Data</div>
+  <button class="s-btn" onclick="exportData()">↓ Export All Data (JSON)</button>
+  <button class="s-btn" onclick="importData()">↑ Import Data (JSON)</button>
+  <div class="s-divider"></div>
+  <button class="s-btn danger" onclick="clearAVCache()">Clear API Cache</button>
+</div>
+
+
+<script src="js/00-config.js"></script>
+<script src="js/01-login.js"></script>
+<script src="js/02-storage.js"></script>
+<script src="js/03-cloud.js"></script>
+<script src="js/04-settings.js"></script>
+<script src="js/05-property.js"></script>
+<script src="js/06-stock.js"></script>
+<script src="js/07-init.js"></script>
+</body>
+</html>
