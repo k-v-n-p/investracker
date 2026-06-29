@@ -45,6 +45,7 @@
       <span>₹/$</span>
       <input type="number" id="exRate" value="93" min="50" max="150" step="0.5" oninput="update()">
     </div>
+    <button id="privacy-btn" class="privacy-btn" onclick="event.stopPropagation(); Privacy.toggle()" title="Show amounts">ℹ</button>
     <button class="gear-btn" onclick="openSettings()" title="Settings">⚙</button>
   </div>
 </div>
@@ -488,6 +489,7 @@
 
 <script src="js/00-config.js"></script>
 <script src="js/01-login.js"></script>
+<script src="js/02-privacy.js"></script>
 <script src="js/02-storage.js"></script>
 <script src="js/03-cloud.js"></script>
 <script src="js/04-settings.js"></script>

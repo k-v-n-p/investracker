@@ -1,15 +1,26 @@
 // ══ DASHBOARD SWITCH ═══════════════════════════════════════════════════
 let activeDash = 'property';
 
+function refreshHeaderTitles() {
+  const hidden = typeof Privacy !== 'undefined' && Privacy.hidden;
+  if (activeDash === 'stock') {
+    document.getElementById('titleActive').textContent = hidden ? 'USP' : 'US Stock Portfolio';
+    document.getElementById('titleSwitch').textContent = hidden ? '⇄ PIC' : '⇄ Property Calculator';
+    document.getElementById('hdrSub').textContent = 'Robinhood · US Equities';
+  } else {
+    document.getElementById('titleActive').textContent = hidden ? 'PIC' : 'Property Investment Calculator';
+    document.getElementById('titleSwitch').textContent = hidden ? '⇄ USP' : '⇄ Stock Portfolio';
+    document.getElementById('hdrSub').textContent = 'Hyderabad · NRI Dashboard';
+  }
+}
+
 function switchDashboard() {
   if (activeDash==='property') {
     activeDash='stock';
     document.getElementById('propertyDash').classList.add('hidden');
     document.getElementById('stockDash').classList.remove('hidden');
     document.getElementById('rateWrapEl').classList.add('hidden');
-    document.getElementById('titleActive').textContent     = 'US Stock Portfolio';
-    document.getElementById('titleSwitch').textContent     = '⇄ Property Calculator';
-    document.getElementById('hdrSub').textContent          = 'Robinhood · US Equities';
+    refreshHeaderTitles();
     document.getElementById('profileDot').style.background = '#3b82f6';
     setTimeout(()=>{ perfChart.resize(); allocChart.resize(); },60);
     if (stockHoldings.length) {
@@ -27,9 +38,7 @@ function switchDashboard() {
     document.getElementById('propertyDash').classList.remove('hidden');
     document.getElementById('curToggleWrap').classList.remove('hidden');
     document.getElementById('rateWrapEl').classList.remove('hidden');
-    document.getElementById('titleActive').textContent     = 'Property Investment Calculator';
-    document.getElementById('titleSwitch').textContent     = '⇄ Stock Portfolio';
-    document.getElementById('hdrSub').textContent          = 'Hyderabad · NRI Dashboard';
+    refreshHeaderTitles();
     renderProfileBar();
   }
 }

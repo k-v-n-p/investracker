@@ -11,6 +11,7 @@ async function boot() {
   loadProfile(activeProfile);
   renderHoldings();
   updateStockCards();
+  Privacy.init();
 }
 
 boot();

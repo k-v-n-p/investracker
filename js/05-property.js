@@ -184,6 +184,7 @@ function startRename(evt, i) {
 function exRate() { return parseFloat(document.getElementById('exRate').value) || 93; }
 
 function fmtC(inr) {
+  if (typeof Privacy !== 'undefined' && Privacy.hidden) return '••••';
   const neg=inr<0, abs=Math.abs(inr), s=neg?'-':'';
   if (currency==='USD') {
     const v=abs/exRate();
@@ -196,6 +197,7 @@ function fmtC(inr) {
   return s+'₹'+Math.round(abs).toLocaleString('en-IN');
 }
 function fmtAxis(inr) {
+  if (typeof Privacy !== 'undefined' && Privacy.hidden) return '••••';
   const neg=inr<0, abs=Math.abs(inr), s=neg?'-':'';
   if (currency==='USD') {
     const v=abs/exRate();
@@ -210,6 +212,7 @@ function fmtAxis(inr) {
 
 // USD formatter for stock dashboard values
 function fmtUSD(n) {
+  if (typeof Privacy !== 'undefined' && Privacy.hidden) return '••••';
   const abs=Math.abs(n);
   if (abs>=1e6) return '$'+(abs/1e6).toFixed(2)+'M';
   if (abs>=1e3) return '$'+(abs/1e3).toFixed(1)+'K';
@@ -223,6 +226,7 @@ function fmtSt(usd) {
 }
 // Per-share price (more decimal precision)
 function fmtStPx(usd) {
+  if (typeof Privacy !== 'undefined' && Privacy.hidden) return '••••';
   if (currency==='INR') {
     const inr=usd*exRate();
     if (inr>=1e5) return '₹'+(inr/1e5).toFixed(2)+'L';
@@ -466,7 +470,7 @@ function updateCompareTab() {
   const pts = buildCompareData();
   compareChart.data.datasets = pts.map(d=>({
     label: d.pName,
-    data: [{x:d.x, y:d.y, r:d.r, pName:d.pName, recoupFound:d.recoupFound}],
+    data: [{x:d.x, y:d.y, r:(typeof Privacy!=='undefined'&&Privacy.hidden)?8:d.r, pName:d.pName, recoupFound:d.recoupFound}],
     backgroundColor: hexRgba(d.color, 0.65),
     borderColor: d.color, borderWidth:2,
   }));
