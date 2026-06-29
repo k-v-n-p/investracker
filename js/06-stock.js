@@ -170,6 +170,25 @@ function setPnlView(view) {
   updateStockCharts();
 }
 
+function updatePnlHistoryHint() {
+  const el = document.getElementById('sh-pnl-hint');
+  if (!el) return;
+  if (!stockHoldings.length) { el.textContent = ''; return; }
+  if (stockPnlHistory.length === 0) {
+    el.textContent = 'No P&L history — click Backfill to chart how today’s portfolio would have looked.';
+  } else if (stockPnlHistory.length === 1) {
+    el.textContent = 'Today only — Backfill for full history (snapshot of current holdings, not trade history).';
+  } else {
+    el.textContent = 'Snapshot of current holdings · re-Backfill after you change positions.';
+  }
+}
+
+function invalidatePnlHistory() {
+  stockPnlHistory = [];
+  Storage.save('stock_pnl_history', stockPnlHistory);
+  updatePnlHistoryHint();
+}
+
 async function backfillPnlHistory() {
   if (!AV.keys.length) { alert('Add an API key in Settings first.'); return; }
   if (!stockHoldings.length) return;
@@ -191,23 +210,20 @@ async function backfillPnlHistory() {
   const dateSet=new Set();
   Object.values(dailyData).forEach(series=>series.forEach(d=>dateSet.add(d.date)));
   const costBasis=stockHoldings.reduce((s,h)=>s+h.shares*h.avgCost,0);
+  stockPnlHistory = [];
   dateSet.forEach(date=>{
     let portVal=0;
     stockHoldings.forEach(h=>{
       const series=dailyData[h.ticker]||[];
       const bar=series.find(d=>d.date===date);
       if (bar) { portVal+=h.shares*bar.close; return; }
-      // fill-forward: use last available close before this date
       const before=series.filter(d=>d.date<date);
       if (before.length) portVal+=h.shares*before[before.length-1].close;
-      else portVal+=h.shares*h.avgCost; // fallback to cost
+      else portVal+=h.shares*h.avgCost;
     });
     const pnlValue=Math.round((portVal-costBasis)*100)/100;
     const pnlPct=costBasis>0?Math.round((pnlValue/costBasis)*10000)/100:0;
-    const entry={date, pnlValue, pnlPct};
-    const idx=stockPnlHistory.findIndex(d=>d.date===date);
-    if (idx>=0) stockPnlHistory[idx]=entry;
-    else stockPnlHistory.push(entry);
+    stockPnlHistory.push({date, pnlValue, pnlPct});
   });
   stockPnlHistory.sort((a,b)=>a.date.localeCompare(b.date));
   Storage.save('stock_pnl_history',stockPnlHistory);
@@ -215,6 +231,7 @@ async function backfillPnlHistory() {
   const reqCount=AV.todayReqs;
   document.getElementById('sh-status').textContent=
     `Backfilled ${dateSet.size} dates from ${ok}/${stockHoldings.length} tickers · ${reqCount} API calls today`;
+  updatePnlHistoryHint();
   updateStockCharts();
 }
 
@@ -260,6 +277,7 @@ function mergeHolding(ticker, name, newShares, newPrice, buyDate) {
   else if (_editIdx>=0) stockHoldings.splice(_editIdx,1);
   stockHoldings.push({ticker, name:name||ticker, shares:newShares, avgCost:newPrice, firstBuyDate:buyDate});
   Storage.save('stock_holdings', stockHoldings);
+  invalidatePnlHistory();
 }
 
 // portfolioValue = Σ(shares × currentPrice)
@@ -429,6 +447,7 @@ function updateStockCharts() {
 
 function renderStockDash() {
   updateStockCards(); renderHoldings(); updateStockCharts();
+  updatePnlHistoryHint();
   if (lastRefreshed) {
     const reqCount=AV.todayReqs;
     document.getElementById('sh-status').textContent=
@@ -447,6 +466,7 @@ function recordPnlSnapshot() {
   else stockPnlHistory.push(entry);
   stockPnlHistory.sort((a,b)=>a.date.localeCompare(b.date));
   Storage.save('stock_pnl_history', stockPnlHistory);
+  updatePnlHistoryHint();
 }
 
 async function refreshStockData(force=false) {
@@ -564,7 +584,10 @@ function _showModalErr(el,msg) { el.textContent=msg; el.style.display='block'; }
 function deleteHolding(i) {
   if (!confirm(`Remove ${stockHoldings[i].ticker} from your portfolio?`)) return;
   delete stockPrices[stockHoldings[i].ticker];
-  stockHoldings.splice(i,1); Storage.save('stock_holdings',stockHoldings); renderStockDash();
+  stockHoldings.splice(i,1);
+  Storage.save('stock_holdings', stockHoldings);
+  invalidatePnlHistory();
+  renderStockDash();
 }
 function editHolding(i) { openAddModal(i); }
 
