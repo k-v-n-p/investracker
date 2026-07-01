@@ -14,3 +14,6 @@ server/.env
 .DS_Store
 Thumbs.db
 *.log
+
+# Local Cursor config (commands, skills, hooks) — kept locally, not tracked
+.cursor/
