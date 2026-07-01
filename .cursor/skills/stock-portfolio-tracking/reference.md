@@ -13,7 +13,7 @@
 | Key | Contents |
 |-----|----------|
 | `stock_holdings` | Array of holding objects |
-| `app_settings` | `{ apiKey, apiKey2, exchangeRate }` |
+| `app_settings` | `{ apiKeys: string[], exchangeRate }` |
 | `av_*` | Cached API responses per symbol/endpoint |
 
 ## Chart behavior

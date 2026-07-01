@@ -1,6 +1,7 @@
 // ══ PROPERTY CONSTANTS & STATE ═════════════════════════════════════════
 const TERM = 240;
-let currency     = 'INR';
+// Property defaults to INR, stock portfolio defaults to USD — each dashboard remembers its own choice
+let currency     = localStorage.getItem('currency_property') || 'INR';
 let horizonYrs   = 5;
 let rentalINR    = 0;
 let _busy        = false;
@@ -478,6 +479,8 @@ function updateCompareTab() {
 }
 function setCurrency(c) {
   currency=c;
+  const curKey=(typeof activeDash!=='undefined'&&activeDash==='stock')?'currency_stock':'currency_property';
+  localStorage.setItem(curKey, c);
   document.getElementById('btnINR').classList.toggle('active',c==='INR');
   document.getElementById('btnUSD').classList.toggle('active',c==='USD');
   document.getElementById('rentalPfx').textContent=c==='INR'?'₹':'$';

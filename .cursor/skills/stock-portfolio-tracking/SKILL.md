@@ -31,7 +31,7 @@ Read [README.md](../../README.md) for user-facing behavior before changing featu
 ### Export/import envelope
 
 ```javascript
-{ version, exportedAt, settings: { apiKey, apiKey2 }, property_profiles, stock_holdings }
+{ version, exportedAt, settings: { apiKeys: string[] }, property_profiles, stock_holdings }
 ```
 
 ### Runtime price cache
@@ -59,7 +59,7 @@ Performance series: for each trading date, sum `shares × close`; **fill forward
 | Concern | Pattern |
 |---------|---------|
 | Free tier | 25 requests/day per key |
-| Dual keys | Key 2 is fallback when Key 1 exhausted |
+| Multiple keys | `app_settings.apiKeys` is a flexible array; `AV._fetch` round-robins through all keys, wrapping back to the first once the last is exhausted, and only throws `RATE_LIMITED` after every key fails in one pass |
 | Endpoints | `GLOBAL_QUOTE` (live price), `SYMBOL_SEARCH` (autocomplete), `TIME_SERIES_DAILY` (100-day history) |
 | Cache | Store responses in `av_*` keys; respect TTL to avoid re-fetching |
 | UX | Show skeleton loaders in table until prices arrive; status bar shows last refresh time |

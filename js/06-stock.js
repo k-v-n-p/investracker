@@ -23,6 +23,7 @@ function switchDashboard() {
     refreshHeaderTitles();
     document.getElementById('profileDot').style.background = '#3b82f6';
     setTimeout(()=>{ perfChart.resize(); allocChart.resize(); },60);
+    setCurrency(localStorage.getItem('currency_stock') || 'USD');
     if (stockHoldings.length) {
       const todayPrices=Storage.load('stock_prices_'+new Date().toISOString().slice(0,10),null);
       if (todayPrices) {
@@ -38,6 +39,7 @@ function switchDashboard() {
     document.getElementById('propertyDash').classList.remove('hidden');
     document.getElementById('curToggleWrap').classList.remove('hidden');
     document.getElementById('rateWrapEl').classList.remove('hidden');
+    setCurrency(localStorage.getItem('currency_property') || 'INR');
     refreshHeaderTitles();
     renderProfileBar();
   }
@@ -46,10 +48,13 @@ function switchDashboard() {
 // ══ ALPHA VANTAGE API ══════════════════════════════════════════════════
 const AV = {
   BASE: 'https://www.alphavantage.co/query',
-  _activeKey: 0,   // 0=unset, 1=key1 in use, 2=key2 fallback
+  _activeKeyIdx: -1,          // index into keys[] that last succeeded
+  _lastRateLimited: new Set(),// indices that were rate-limited on the most recent _fetch pass
 
   get keys() {
     const s=Storage.load('app_settings',{});
+    if (Array.isArray(s.apiKeys)) return s.apiKeys.filter(Boolean);
+    // Legacy 2-key format — migrated to apiKeys[] on next Settings save
     return [s.apiKey, s.apiKey2].filter(Boolean);
   },
   // kept for backward-compat guard checks
@@ -88,15 +93,18 @@ const AV = {
   },
 
   async _fetch(params) {
-    const [k1, k2]=this.keys;
-    if (!k1) throw new Error('NO_KEY');
-    const d=await this._fetchWithKey(params, k1);
-    if (!this._isRateLimited(d)) { this._activeKey=1; return d; }
-    // Key 1 hit its daily limit — try Key 2
-    if (!k2) { this._activeKey=1; throw new Error('RATE_LIMITED'); }
-    const d2=await this._fetchWithKey(params, k2);
-    if (this._isRateLimited(d2)) { this._activeKey=2; throw new Error('RATE_LIMITED'); }
-    this._activeKey=2; return d2;
+    const keys=this.keys;
+    if (!keys.length) throw new Error('NO_KEY');
+    this._lastRateLimited=new Set();
+    // Start from the last-known-good key and wrap around — only error once every key has been tried
+    const start=this._activeKeyIdx>=0?this._activeKeyIdx:0;
+    for (let i=0;i<keys.length;i++) {
+      const idx=(start+i)%keys.length;
+      const d=await this._fetchWithKey(params, keys[idx]);
+      if (!this._isRateLimited(d)) { this._activeKeyIdx=idx; return d; }
+      this._lastRateLimited.add(idx);
+    }
+    throw new Error('RATE_LIMITED');
   },
 
   async quote(ticker) {
@@ -139,8 +147,13 @@ const AV = {
 let stockHoldings  = Storage.load('stock_holdings', []);
 let stockPnlHistory= Storage.load('stock_pnl_history', []);
 let stockPrices    = {};
+let stockDailyCache= {};   // ticker -> daily close series, fetched lazily for 1M/3M/6M change
 let lastRefreshed  = null;
 let _editIdx       = -1;
+let _changePeriod  = 'day';   // 'day' | '1m' | '3m' | '6m' — cycled by clicking the change column header
+const _CHANGE_PERIODS = ['day', '1m', '3m', '6m'];
+const _CHANGE_LABELS  = { day:'Day $', '1m':'1M $', '3m':'3M $', '6m':'6M $' };
+const _PERIOD_DAYS    = { '1m':21, '3m':63, '6m':126 }; // approx trading days
 let _holdingsCols  = { invested: '$', returns: '$' };
 let _dragIdx       = null;
 let _pnlView       = 'daily';   // 'daily' | 'monthly'
@@ -239,6 +252,33 @@ function toggleHoldingsCol(col) {
   _holdingsCols[col] = _holdingsCols[col]==='$' ? '%' : '$';
   document.getElementById('sh-col-'+col+'-mode').textContent = _holdingsCols[col];
   renderHoldings();
+}
+
+// Change in value over the period, using the cached daily close from ~N trading days ago
+function periodChangeAmount(ticker, period, shares, currentPrice) {
+  const series=stockDailyCache[ticker];
+  if (!series||!series.length) return null;
+  const idx=series.length-1-_PERIOD_DAYS[period];
+  if (idx<0) return null;
+  return shares*(currentPrice-series[idx].close);
+}
+
+async function ensureDailyDataForHoldings() {
+  const missing=stockHoldings.filter(h=>!stockDailyCache[h.ticker]);
+  for (const h of missing) {
+    try { stockDailyCache[h.ticker]=await AV.daily(h.ticker); }
+    catch(e) { /* rate limited — leave missing, cell shows — */ }
+  }
+}
+
+function toggleChangePeriod() {
+  const idx=_CHANGE_PERIODS.indexOf(_changePeriod);
+  _changePeriod=_CHANGE_PERIODS[(idx+1)%_CHANGE_PERIODS.length];
+  document.getElementById('sh-col-change-th').textContent=_CHANGE_LABELS[_changePeriod];
+  renderHoldings();
+  if (_changePeriod!=='day' && AV.keys.length) {
+    ensureDailyDataForHoldings().then(renderHoldings);
+  }
 }
 
 function onDragStart(e, idx) {
@@ -372,11 +412,8 @@ function updateStockCards() {
 function renderHoldings() {
   const tbody=document.getElementById('sh-tbody');
   if (!stockHoldings.length) {
-    tbody.innerHTML='<tr><td colspan="11" class="sh-empty">No holdings yet — click + Add Stock to get started.</td></tr>'; return;
+    tbody.innerHTML='<tr><td colspan="10" class="sh-empty">No holdings yet — click + Add Stock to get started.</td></tr>'; return;
   }
-  const totalPortfolioValue=stockHoldings.reduce((s,h)=>{
-    const p=stockPrices[h.ticker]; return s+h.shares*(p?p.price:h.avgCost);
-  },0);
   const totalCostBasis=stockHoldings.reduce((s,h)=>s+h.shares*h.avgCost, 0);
   tbody.innerHTML=stockHoldings.map((h,i)=>{
     const p=stockPrices[h.ticker], price=p?p.price:null;
@@ -384,12 +421,19 @@ function renderHoldings() {
     const cb=h.shares*h.avgCost, retD=mv-cb, retP=cb>0?(retD/cb)*100:0;
     const retCls=retD>=0?'sh-pos':'sh-neg';
     const priceStr=price==null?`<span class="sh-skel" style="width:48px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`:fmtStPx(price);
-    const dayChg=p?h.shares*p.change:null;
-    const dayCls=dayChg!=null&&dayChg<0?'sh-neg':'sh-pos';
-    const dayStr=dayChg==null
+    let changeAmt=null, changeLoading;
+    if (_changePeriod==='day') {
+      changeAmt=p?h.shares*p.change:null;
+      changeLoading=price==null;
+    } else {
+      const series=stockDailyCache[h.ticker];
+      changeLoading=price==null||!series;
+      if (!changeLoading) changeAmt=periodChangeAmount(h.ticker, _changePeriod, h.shares, price);
+    }
+    const dayCls=changeAmt!=null&&changeAmt<0?'sh-neg':'sh-pos';
+    const dayStr=changeLoading
       ?`<span class="sh-skel" style="width:52px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`
-      :`<span class="${dayCls}">${dayChg>=0?'+':'−'}${fmtSt(Math.abs(dayChg))}</span>`;
-    const weight=totalPortfolioValue>0?(mv/totalPortfolioValue*100).toFixed(1)+'%':'—';
+      :(changeAmt==null?'—':`<span class="${dayCls}">${changeAmt>=0?'+':'−'}${fmtSt(Math.abs(changeAmt))}</span>`);
     // Invested column: $ = cost basis of this position; % = share of total invested
     const investedCell=_holdingsCols.invested==='$'
       ?fmtSt(cb)
@@ -406,7 +450,6 @@ function renderHoldings() {
       <td>${fmtStPx(h.avgCost)}</td>
       <td>${priceStr}</td>
       <td>${dayStr}</td>
-      <td>${weight}</td>
       <td>${investedCell}</td>
       <td>${returnsCell}</td>
       <td><div class="sh-row-acts">

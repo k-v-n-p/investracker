@@ -19,7 +19,7 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 .rate-wrap input{background:none;border:none;color:#e2e8f0;font-size:12px;font-weight:500;width:44px;outline:none;text-align:center}
 .gear-btn{background:none;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#475569;font-size:14px;cursor:pointer;padding:6px 9px;transition:all .15s;line-height:1;flex-shrink:0}
 .gear-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.2)}
-.privacy-btn{background:none;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#475569;font-size:14px;font-weight:600;font-style:italic;cursor:pointer;padding:6px 10px;transition:all .15s;line-height:1;flex-shrink:0;font-family:Georgia,serif}
+.privacy-btn{background:none;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#475569;cursor:pointer;padding:6px 9px;transition:all .15s;line-height:1;flex-shrink:0;display:flex;align-items:center}
 .privacy-btn:hover{color:#94a3b8;border-color:rgba(255,255,255,.2)}
 .privacy-btn.active{color:#60a5fa;border-color:rgba(59,130,246,.4);background:#1e3a5f}
 #hdrSub{display:none}
@@ -82,6 +82,11 @@ body{background:#0d0f14;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFo
 .s-field label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155;display:block;margin-bottom:6px}
 .s-field input{width:100%;background:#1e2535;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:12px;padding:8px 10px;outline:none}
 .s-field input:focus{border-color:#3b82f6}
+.s-key-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.s-key-row input{flex:1;min-width:0}
+.s-key-row .s-label-status{flex-shrink:0;white-space:nowrap}
+.s-key-remove{background:none;border:1px solid rgba(255,255,255,.08);border-radius:6px;color:#475569;font-size:11px;cursor:pointer;padding:7px 8px;line-height:1;flex-shrink:0;transition:all .15s}
+.s-key-remove:hover{color:#f87171;border-color:rgba(248,113,113,.3)}
 .s-hint{font-size:10px;color:#334155;margin-top:5px}
 .s-hint a{color:#3b82f6;text-decoration:none}
 .s-section{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#334155}
